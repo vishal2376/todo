@@ -209,14 +209,14 @@ int main()
 		case '4':
 		{
 			char ch;
-			do
-			{
-				cout << "\n\n\t\tDo you want to remove all tasks?(y/n) : ";
-				cin >> ch;
-				if (ch == 'y')
-					remove("tasks.dat");
-
-			} while (ch != 'y' || ch != 'n');
+			system("clear");
+			read_task();
+			cout << "\n\n\t\tDo you want to remove all tasks?(y or Y to remove) : ";
+			cin.ignore();
+			cin >> ch;
+			ch = tolower(ch);
+			if (ch == 'y')
+				remove("tasks.dat");
 			break;
 		}
 		case '5':
@@ -226,7 +226,7 @@ int main()
 		default:
 			cout << "\n\t\t\t!!!!!! Invalid Input !!!!!!!";
 		}
-	} while (ch != '4');
+	} while (ch != '5');
 
 	return 0;
 }
