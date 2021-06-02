@@ -1,4 +1,7 @@
-// tick mark ✓
+//-----------------------ToDo App-------------------------//
+//-----------------Made by - vishal singh-------------//
+
+// change system("clear") with system("cls") if you are using Windows
 
 #include<iostream>
 #include<fstream>
@@ -8,6 +11,8 @@
 #include<iomanip>
 
 using namespace std;
+
+#define clear cls
 
 void write_task();
 void read_task(int);
@@ -164,7 +169,7 @@ int main()
 {
 
 	char ch;
-
+	cout << "clear";
 	do
 	{
 		system("clear");
