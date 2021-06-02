@@ -5,11 +5,12 @@
 #include<string>
 #include<cstdlib>
 #include<cstdio>
+#include<iomanip>
 
 using namespace std;
 
 void write_task();
-void read_task();
+void read_task(int);
 void getch();
 int ret_task_no();
 
@@ -24,11 +25,12 @@ public:
 	void show_task();
 	void check_task();
 	int Rtask_no() {return task_no;}
+	int Rcheck() {return check;}
 };
 
 void todo::create_task()
 {
-	cout << "\n\n\t\t\tEnter task : ";
+	cout << "\n\n\t\tEnter task : ";
 	cin.ignore();
 	cin.getline(task_name, 80);
 	task_no = ret_task_no() + 1;
@@ -40,7 +42,7 @@ void todo::show_task()
 	string task_checkbox = " [ ] ";
 	if (check == 1)
 		task_checkbox = " [✓] ";
-	cout << task_no << task_checkbox << task_name << "\n";
+	cout << "\t\t    " << setw(2) << task_no << task_checkbox << "---- " << task_name << "\n";
 }
 
 void todo::check_task()
@@ -62,6 +64,35 @@ void write_task()
 	file.close();
 
 }
+
+void read_task(int s = 0)
+{
+	todo td;
+	ifstream file;
+	int total, completed;
+	total = completed = 0;
+	file.open("tasks.dat", ios::binary);
+	system("clear");
+	cout << "\n\n";
+	while (file.read((char*)&td, sizeof(todo)))
+	{
+		td.show_task();
+		total++;
+		if (td.Rcheck() == 1)
+			completed++;
+	}
+	file.close();
+	if (s == 1)
+	{
+		cout << "\n\n\t\t\t=======================";
+		cout << "\n\t\t\t Total Tasks ------ " << setw(2) << total;
+		cout << "\n\t\t\t Completed   ------ " << setw(2) << completed;
+		cout << "\n\t\t\t Remaining   ------ " << setw(2) << total - completed;
+		cout << "\n\t\t\t=======================";
+	}
+
+}
+
 
 int ret_task_no()
 {
@@ -87,19 +118,6 @@ int ret_task_no()
 	return tasknum;
 }
 
-void read_task()
-{
-	todo td;
-	ifstream file;
-	file.open("tasks.dat", ios::binary);
-
-	while (file.read((char*)&td, sizeof(todo)))
-	{
-		td.show_task();
-	}
-	file.close();
-
-}
 
 void modify_task(int n)
 {
@@ -137,6 +155,7 @@ void modify_task(int n)
 void getch()
 {
 	char ch;
+	cout << "\n";
 	cin.ignore();
 	ch = getchar();
 }
@@ -153,8 +172,9 @@ int main()
 		cout << "\n\n\t\t\t1.Add Task";
 		cout << "\n\n\t\t\t2.Show Tasks";
 		cout << "\n\n\t\t\t3.Manage Tasks";
-		cout << "\n\n\t\t\t4.Exit";
-		cout << "\n\n\n\t\t\tChoose Option(1-4) :  ";
+		cout << "\n\n\t\t\t4.Remove All Tasks";
+		cout << "\n\n\t\t\t5.Exit";
+		cout << "\n\n\n\t\t\tChoose Option(1-5) :  ";
 		cin >> ch;
 
 		switch (ch)
@@ -166,7 +186,7 @@ int main()
 		}
 		case '2':
 		{
-			read_task();
+			read_task(1);
 			getch();
 			break;
 		}
@@ -177,7 +197,9 @@ int main()
 			{
 				system("clear");
 				read_task();
-				cout << "\n\n\t\t Enter task number to check/uncheck task ( 0 for quit): ";
+				cout << "\n\n\t\t\t[✓] ---- Completed";
+				cout << "\n\t\t\t[ ] ---- Not Completed";
+				cout << "\n\n\tEnter task number to check/uncheck task ( 0 for quit): ";
 				cin >> n;
 				if (n != 0)
 					modify_task(n);
@@ -185,6 +207,19 @@ int main()
 			break;
 		}
 		case '4':
+		{
+			char ch;
+			do
+			{
+				cout << "\n\n\t\tDo you want to remove all tasks?(y/n) : ";
+				cin >> ch;
+				if (ch == 'y')
+					remove("tasks.dat");
+
+			} while (ch != 'y' || ch != 'n');
+			break;
+		}
+		case '5':
 		{
 			exit(0);
 		}
