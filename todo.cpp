@@ -12,7 +12,6 @@
 
 using namespace std;
 
-#define clear cls
 
 void write_task();
 void read_task(int);
@@ -169,7 +168,6 @@ int main()
 {
 
 	char ch;
-	cout << "clear";
 	do
 	{
 		system("clear");
