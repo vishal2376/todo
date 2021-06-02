@@ -22,6 +22,7 @@ class todo
 public:
 	void create_task();
 	void show_task();
+	void check_task();
 	int Rtask_no() {return task_no;}
 };
 
@@ -31,7 +32,7 @@ void todo::create_task()
 	cin.ignore();
 	cin.getline(task_name, 80);
 	task_no = ret_task_no() + 1;
-	check = 0;
+	check = -1;
 }
 
 void todo::show_task()
@@ -40,6 +41,11 @@ void todo::show_task()
 	if (check == 1)
 		task_checkbox = " [✓] ";
 	cout << task_no << task_checkbox << task_name << "\n";
+}
+
+void todo::check_task()
+{
+	check = (-1) * check;
 }
 
 void write_task()
@@ -93,13 +99,39 @@ void read_task()
 	}
 	file.close();
 
-	getch();
-
 }
 
-void check_task()
+void modify_task(int n)
 {
-	system("clear");
+	todo td;
+	fstream file;
+	int flag = 0;
+
+	file.open("tasks.dat", ios::binary | ios::out | ios::in);
+	if (!file)
+	{
+		cout << "!!!! Error : Failed to open the file !!!!";
+		return;
+	}
+
+	while (file.read((char*)&td, sizeof(todo)) && flag == 0 )
+	{
+		if (td.Rtask_no() == n)
+		{
+			td.check_task();
+			int pos = (-1) * sizeof(todo);
+			file.seekp(pos, ios::cur);
+			file.write((char*)&td, sizeof(todo));
+			flag = 1;
+		}
+	}
+	file.close();
+	if (flag == 0)
+	{
+		cout << "\n\n\t\t\t!!!!!!Not Found!!!!!!";
+		getch();
+	}
+
 }
 
 void getch()
@@ -120,7 +152,7 @@ int main()
 		cout << "\n\n\t\t\t\tMain Menu";
 		cout << "\n\n\t\t\t1.Add Task";
 		cout << "\n\n\t\t\t2.Show Tasks";
-		cout << "\n\n\t\t\t3.Check Task";
+		cout << "\n\n\t\t\t3.Manage Tasks";
 		cout << "\n\n\t\t\t4.Exit";
 		cout << "\n\n\n\t\t\tChoose Option(1-4) :  ";
 		cin >> ch;
@@ -135,11 +167,21 @@ int main()
 		case '2':
 		{
 			read_task();
+			getch();
 			break;
 		}
 		case '3':
 		{
-			check_task();
+			int n;
+			do
+			{
+				system("clear");
+				read_task();
+				cout << "\n\n\t\t Enter task number to check/uncheck task ( 0 for quit): ";
+				cin >> n;
+				if (n != 0)
+					modify_task(n);
+			} while (n != 0);
 			break;
 		}
 		case '4':
