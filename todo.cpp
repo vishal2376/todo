@@ -5,14 +5,13 @@
 
 #include<iostream>
 #include<fstream>
-#include<string>
+#include<string.h>
 #include<cstdlib>
 #include<cstdio>
 #include<iomanip>
 
 using namespace std;
 
-#define clear cls
 
 void write_task();
 void read_task(int);
@@ -169,7 +168,6 @@ int main()
 {
 
 	char ch;
-	cout << "clear";
 	do
 	{
 		system("clear");
