@@ -15,13 +15,15 @@ using namespace std;
 
 void write_task();
 void read_task(int);
+void remove_task();
+void modify_task(int);
 void getch();
 int ret_task_no();
 
 class todo
 {
 	char task_name[80];
-	int task_no;
+	int task_no = 0;
 	int check;
 
 public:
@@ -43,7 +45,7 @@ void todo::create_task()
 		if (strlen(task_name) != 0)
 			break;
 		else
-			cout << "\n\n\t\t\t!!! Task can't be empty !!!";
+			cout << "\n\n\t\t!!! Task can't be empty !!!";
 	}
 
 	task_no = ret_task_no() + 1;
@@ -86,7 +88,8 @@ void read_task(int s = 0)
 	total = completed = 0;
 	file.open("tasks.dat", ios::binary);
 	system("clear");
-	cout << "\n\n";
+	cout << "\n\n\t\t   Task No. \tTask title";
+	cout << "\n\t\t  ==================================\n";
 	while (file.read((char*)&td, sizeof(todo)))
 	{
 		td.show_task();
@@ -97,11 +100,11 @@ void read_task(int s = 0)
 	file.close();
 	if (s == 1)
 	{
-		cout << "\n\n\t\t\t=======================";
-		cout << "\n\t\t\t Total Tasks ------ " << setw(2) << total;
-		cout << "\n\t\t\t Completed   ------ " << setw(2) << completed;
-		cout << "\n\t\t\t Remaining   ------ " << setw(2) << total - completed;
-		cout << "\n\t\t\t=======================";
+		cout << "\n\n\t\t\t======================";
+		cout << "\n\t\t\tTotal Tasks ------ " << setw(2) << total;
+		cout << "\n\t\t\tCompleted   ------ " << setw(2) << completed;
+		cout << "\n\t\t\tRemaining   ------ " << setw(2) << total - completed;
+		cout << "\n\t\t\t======================";
 	}
 
 }
@@ -165,6 +168,41 @@ void modify_task(int n)
 
 }
 
+void remove_task(int n)
+{
+	todo td;
+	fstream ifile, ofile;
+	int flag = 0;
+
+	ifile.open("tasks.dat", ios::binary | ios::in);
+	ofile.open("temp.dat", ios::binary | ios::out);
+	if (!ifile)
+	{
+		cout << "!!!! Error : Failed to open the file !!!!";
+		return;
+	}
+	ifile.seekg(0, ios::beg);
+	if (flag == 0)
+		while (ifile.read((char*)&td, sizeof(todo)))
+		{
+			if (td.Rtask_no() != n)
+			{
+				ofile.write((char*)&td, sizeof(todo));
+				flag = 1;
+			}
+		}
+	ifile.close();
+	ofile.close();
+	remove("tasks.dat");
+	rename("temp.dat", "tasks.dat");
+	if (flag == 0)
+	{
+		cout << "\n\n\t\t\t!!!!!!Not Found!!!!!!";
+		getch();
+	}
+
+}
+
 void getch()
 {
 	char ch;
@@ -184,7 +222,7 @@ int main()
 		cout << "\n\n\t\t\t1.Add Task";
 		cout << "\n\n\t\t\t2.Show Tasks";
 		cout << "\n\n\t\t\t3.Manage Tasks";
-		cout << "\n\n\t\t\t4.Remove All Tasks";
+		cout << "\n\n\t\t\t4.Remove Tasks";
 		cout << "\n\n\t\t\t5.Exit";
 		cout << "\n\n\n\t\t\tChoose Option(1-5) :  ";
 		cin >> ch;
@@ -211,7 +249,7 @@ int main()
 				read_task();
 				cout << "\n\n\t\t\t[✓] ---- Completed";
 				cout << "\n\t\t\t[ ] ---- Not Completed";
-				cout << "\n\n\tEnter task number to check/uncheck task ( 0 for quit): ";
+				cout << "\n\n\tEnter task number to check/uncheck task ( 0 for exit): ";
 				cin >> n;
 				if (n != 0)
 					modify_task(n);
@@ -220,15 +258,26 @@ int main()
 		}
 		case '4':
 		{
-			char ch;
-			system("clear");
-			read_task();
-			cout << "\n\n\t\tDo you want to remove all tasks?(y or Y to remove) : ";
-			cin.ignore();
-			cin >> ch;
-			ch = tolower(ch);
-			if (ch == 'y')
-				remove("tasks.dat");
+			int n;
+
+			do
+			{
+				system("clear");
+				read_task();
+				cout << "\n\n\t\t\t-1 ---- Remove All";
+				cout << "\n\t\t\t 0 ---- Exit";
+				cout << "\n\n\t\tEnter task number to remove tasks : ";
+				cin >> n;
+				if (n > 0)
+					remove_task(n);
+				else if (n == -1)
+					remove("tasks.dat");
+				else if (n == 0)
+					break;
+				else
+					cout << "\n\n\t\t\t!!!!! Invalid input !!!!!";
+
+			} while (n != -1);
 			break;
 		}
 		case '5':
