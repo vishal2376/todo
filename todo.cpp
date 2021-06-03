@@ -183,14 +183,23 @@ void remove_task(int n)
 	}
 	ifile.seekg(0, ios::beg);
 	if (flag == 0)
-		while (ifile.read((char*)&td, sizeof(todo)))
-		{
-			if (td.Rtask_no() != n)
-			{
-				ofile.write((char*)&td, sizeof(todo));
-				flag = 1;
+		if (n == -1)
+			while (ifile.read((char*)&td, sizeof(todo)))
+			{	if (td.Rcheck() == -1)
+				{
+					ofile.write((char*)&td, sizeof(todo));
+					flag = 1;
+				}
 			}
-		}
+		else
+			while (ifile.read((char*)&td, sizeof(todo)))
+			{
+				if (td.Rtask_no() != n)
+				{
+					ofile.write((char*)&td, sizeof(todo));
+					flag = 1;
+				}
+			}
 	ifile.close();
 	ofile.close();
 	remove("tasks.dat");
@@ -249,9 +258,9 @@ int main()
 				read_task();
 				cout << "\n\n\t\t\t[✓] ---- Completed";
 				cout << "\n\t\t\t[ ] ---- Not Completed";
-				cout << "\n\n\tEnter task number to check/uncheck task ( 0 for exit): ";
+				cout << "\n\n\tEnter [Task No.] to check/uncheck task ( 0 for exit): ";
 				cin >> n;
-				if (n != 0)
+				if (n > 0)
 					modify_task(n);
 			} while (n != 0);
 			break;
@@ -264,20 +273,21 @@ int main()
 			{
 				system("clear");
 				read_task();
-				cout << "\n\n\t\t\t-1 ---- Remove All";
+				cout << "\n\n\t\t\t-1 ---- Remove completed tasks";
+				cout << "\n\t\t\t-2 ---- Remove all tasks";
 				cout << "\n\t\t\t 0 ---- Exit";
-				cout << "\n\n\t\tEnter task number to remove tasks : ";
+				cout << "\n\n\t\tEnter [Task No.] to remove tasks : ";
 				cin >> n;
-				if (n > 0)
+				if (n > 0 || n == -1)
 					remove_task(n);
-				else if (n == -1)
+				else if (n == -2)
 					remove("tasks.dat");
 				else if (n == 0)
 					break;
 				else
 					cout << "\n\n\t\t\t!!!!! Invalid input !!!!!";
 
-			} while (n != -1);
+			} while (n != -2);
 			break;
 		}
 		case '5':
