@@ -34,9 +34,18 @@ public:
 
 void todo::create_task()
 {
-	cout << "\n\n\t\tEnter task : ";
 	cin.ignore();
-	cin.getline(task_name, 80);
+	while (1)
+	{
+		system("clear");
+		cout << "\n\n\t\tEnter task : ";
+		cin.getline(task_name, 80);
+		if (strlen(task_name) != 0)
+			break;
+		else
+			cout << "\n\n\t\t\t!!! Task can't be empty !!!";
+	}
+
 	task_no = ret_task_no() + 1;
 	check = -1;
 }
