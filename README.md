@@ -1,6 +1,7 @@
 
 # Todo
 
+A simple todo application
 
 <p align="center">
   <a href="https://github.com/vishal2376/todo/issues">
